@@ -5,10 +5,11 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-
+@Component
 public class JwtProvider {
     @Value("${expired}")
     private Long EXPIRED;
@@ -17,11 +18,10 @@ public class JwtProvider {
     private Logger logger = LoggerFactory.getLogger(JwtEntryPoint.class);
     public String generateToken(UserPrinciple userPrinciple){
         Date dateExpiration = new Date(new Date().getTime()+EXPIRED);
-        String token = Jwts.builder().
+        return Jwts.builder().
                 setSubject(userPrinciple.getUsername()).
                 setExpiration(dateExpiration).
                 signWith(SignatureAlgorithm.ES256,SECRET_KEY).compact();
-        return token;
     }
 
     public Boolean validateToken(String token){
