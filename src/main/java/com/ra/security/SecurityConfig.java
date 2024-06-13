@@ -31,6 +31,7 @@ public class SecurityConfig {
                 csrf(AbstractHttpConfigurer::disable).
                 authenticationProvider(authenticationProvider()).
                 authorizeHttpRequests((auth)->{
+                    auth.requestMatchers("/api/v1/auth/**").permitAll();
                     auth.anyRequest().authenticated();
                 }).exceptionHandling(auth->auth.authenticationEntryPoint(jwtEntryPoint)).
                 sessionManagement((auth)->auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
