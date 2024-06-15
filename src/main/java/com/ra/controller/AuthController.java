@@ -1,6 +1,7 @@
 package com.ra.controller;
 
 import com.ra.model.dto.UserLoginDTO;
+import com.ra.model.dto.UserRegisterDTO;
 import com.ra.model.entity.User;
 import com.ra.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO userLoginDTO){
         return new ResponseEntity<>(userService.login(userLoginDTO), HttpStatus.OK);
+    }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UserRegisterDTO userRegisterDTO){
+        return new ResponseEntity<>(userService.register(userRegisterDTO),HttpStatus.CREATED);
     }
 }

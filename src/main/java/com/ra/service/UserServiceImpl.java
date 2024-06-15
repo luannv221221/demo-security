@@ -1,14 +1,24 @@
 package com.ra.service;
 
 import com.ra.model.dto.UserLoginDTO;
+import com.ra.model.dto.UserRegisterDTO;
 import com.ra.model.dto.UserResponseDTO;
+import com.ra.model.dto.UserResponseRegisterDTO;
+import com.ra.model.entity.Role;
+import com.ra.model.entity.User;
+import com.ra.repository.RoleRepository;
+import com.ra.repository.UserRepository;
 import com.ra.security.UserPrinciple;
 import com.ra.security.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -16,6 +26,10 @@ public class UserServiceImpl implements UserService{
     private AuthenticationProvider authenticationProvider;
     @Autowired
     private JwtProvider jwtProvider;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Override
     public UserResponseDTO login(UserLoginDTO userLoginDTO) {
         Authentication authentication;
@@ -28,6 +42,25 @@ public class UserServiceImpl implements UserService{
                 roles(userPrinciple.getUser().getRoles()).
                 typeToken("Bearer").
                 token(jwtProvider.generateToken(userPrinciple)).build();
+
+    }
+
+    @Override
+    public UserResponseRegisterDTO register(UserRegisterDTO userRegisterDTO) {
+        Set<Role> roles = new HashSet<>();
+        Role role = roleRepository.findRoleByRoleName("USER");
+        roles.add(role);
+        User user = User.builder()
+                .userName(userRegisterDTO.getUserName())
+                .fullName(userRegisterDTO.getFullName())
+                .password(new BCryptPasswordEncoder().encode(userRegisterDTO.getPassword()))
+                .status(true)
+                .roles(roles)
+                .build();
+        User userNew = userRepository.save(user);
+        return UserResponseRegisterDTO.builder()
+                .userName(userNew.getUserName())
+                .fullName(userNew.getFullName()).build();
 
     }
 }
