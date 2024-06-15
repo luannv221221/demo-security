@@ -22,7 +22,12 @@ public class UserServiceImpl implements UserService{
         authentication = authenticationProvider.
                 authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.getUserName(),userLoginDTO.getPassword()));
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
-        return UserResponseDTO.builder().token(jwtProvider.generateToken(userPrinciple)).build();
+        return UserResponseDTO.builder().
+                userName(userPrinciple.getUsername()).
+                fullName(userPrinciple.getUser().getFullName()).
+                roles(userPrinciple.getUser().getRoles()).
+                typeToken("Bearer").
+                token(jwtProvider.generateToken(userPrinciple)).build();
 
     }
 }

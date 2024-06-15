@@ -10,6 +10,9 @@ import java.util.Set;
 @Setter
 @Builder
 public class UserResponseDTO {
-
+    private String userName;
+    private String fullName;
     private String token;
+    private String typeToken;
+    private Set<Role> roles;
 }
