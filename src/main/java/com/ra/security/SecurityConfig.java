@@ -1,5 +1,6 @@
 package com.ra.security;
 
+import com.ra.security.jwt.CustomAccessDeniedHandler;
 import com.ra.security.jwt.JwtAuthTokenFilter;
 import com.ra.security.jwt.JwtEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class SecurityConfig {
     @Autowired
     private JwtEntryPoint jwtEntryPoint;
     @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+    @Autowired
     private JwtAuthTokenFilter jwtAuthTokenFilter;
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
@@ -35,7 +38,9 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/v1/admin/categories").hasAnyAuthority("ADMIN","SUB_ADMIN");
                     auth.requestMatchers("/api/v1/admin/account").hasAuthority("ADMIN");
                     auth.anyRequest().authenticated();
-                }).exceptionHandling(auth->auth.authenticationEntryPoint(jwtEntryPoint)).
+                }).exceptionHandling(auth->auth.authenticationEntryPoint(jwtEntryPoint).
+                        accessDeniedHandler(customAccessDeniedHandler)
+                ).
                 sessionManagement((auth)->auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
