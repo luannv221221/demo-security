@@ -1,9 +1,6 @@
 package com.ra.service;
 
-import com.ra.model.dto.UserLoginDTO;
-import com.ra.model.dto.UserRegisterDTO;
-import com.ra.model.dto.UserResponseDTO;
-import com.ra.model.dto.UserResponseRegisterDTO;
+import com.ra.model.dto.*;
 import com.ra.model.entity.Role;
 import com.ra.model.entity.User;
 import com.ra.repository.RoleRepository;
@@ -62,5 +59,27 @@ public class UserServiceImpl implements UserService{
                 .userName(userNew.getUserName())
                 .fullName(userNew.getFullName()).build();
 
+    }
+
+    @Override
+    public UserResponseRegisterDTO createAccount(AccountRequestDTO accountRequestDTO) {
+        Set<Role> roles = new HashSet<>();
+
+        for (String roleName : accountRequestDTO.getRoleNames()) {
+            Role role = roleRepository.findRoleByRoleName(roleName);
+            roles.add(role);
+        }
+
+        User user = User.builder()
+                .userName(accountRequestDTO.getUserName())
+                .fullName(accountRequestDTO.getFullName())
+                .password(new BCryptPasswordEncoder().encode(accountRequestDTO.getPassword()))
+                .status(true)
+                .roles(roles)
+                .build();
+        User userNew = userRepository.save(user);
+        return UserResponseRegisterDTO.builder()
+                .userName(userNew.getUserName())
+                .fullName(userNew.getFullName()).build();
     }
 }
