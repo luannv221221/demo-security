@@ -32,6 +32,7 @@ public class SecurityConfig {
                 authenticationProvider(authenticationProvider()).
                 authorizeHttpRequests((auth)->{
                     auth.requestMatchers("/api/v1/auth/**").permitAll();
+                    auth.requestMatchers("/api/v1/admin/categories").hasAnyAuthority("ADMIN","SUB_ADMIN");
                     auth.anyRequest().authenticated();
                 }).exceptionHandling(auth->auth.authenticationEntryPoint(jwtEntryPoint)).
                 sessionManagement((auth)->auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

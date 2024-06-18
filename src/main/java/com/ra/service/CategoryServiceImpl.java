@@ -26,6 +26,14 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public CategoryResponseDTO create(CategoryRequestDTO categoryRequestDTO) {
-        return null;
+
+        Category category = categoryRepository.save(
+                Category.builder().
+                        categoryName(categoryRequestDTO.getCategoryName())
+                        .categoryStatus(categoryRequestDTO.getCategoryStatus())
+                        .build()
+        );
+
+        return new CategoryResponseDTO(category);
     }
 }
