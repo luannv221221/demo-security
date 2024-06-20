@@ -37,6 +37,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/v1/auth/**").permitAll();
                     auth.requestMatchers("/api/v1/admin/categories").hasAnyAuthority("ADMIN","SUB_ADMIN");
                     auth.requestMatchers("/api/v1/admin/account").hasAuthority("ADMIN");
+                    auth.requestMatchers("/api/v1/upload").hasAuthority("ADMIN");
                     auth.anyRequest().authenticated();
                 }).exceptionHandling(auth->auth.authenticationEntryPoint(jwtEntryPoint).
                         accessDeniedHandler(customAccessDeniedHandler)
